@@ -59,7 +59,13 @@ Note: see src/example.php
 # Notes
 
 CSRF Token may be stored in $_SESSION, however pay special attention to 
-CSRF_SECRET_FILE_MAX_LIFE and MAX_CSRF_AGE
+CSRF_SECRET_FILE_MAX_LIFE and MAX_CSRF_AGE.
+
+Calls start_session() if it has not already been called. If you call
+start_session() in your program without first checking, this may 
+cause a NOTICE message.
+
+If you change CSRF_BYTE_SIZE, delete the file CSRF_SECRET_FILE.
 
 
 
