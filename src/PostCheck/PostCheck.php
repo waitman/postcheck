@@ -101,7 +101,11 @@ class PostCheck {
 		
 			$bytes = openssl_random_pseudo_bytes(CSRF_BYTE_SIZE);
 			$hex   = bin2hex($bytes);
-			$seal = password_hash($t.$hex.$secret,PASSWORD_DEFAULT);
+
+			if (session_id() == "")
+				session_start();
+
+			$seal = password_hash($t.$hex.$secret.session_id(),PASSWORD_DEFAULT);
 			$a=array(
 				't'=>$t,
 				'p'=>$hex,
@@ -166,6 +170,8 @@ class PostCheck {
 			}
 
 			/* check csrf token */
+			if (session_id() == "")
+				session_start();
 
 			$csrf_valid = false;
 			if (is_array($_POST) && 
@@ -180,9 +186,9 @@ class PostCheck {
 						{
 							$s = unserialize(file_get_contents(CSRF_SECRET_FILE));
 							if (is_array($s) && array_key_exists('secret',$s)) $secret = $s['secret'];
-			                if (strlen($secret)===(CSRF_BYTE_SIZE*2))
+							if (strlen($secret)===(CSRF_BYTE_SIZE*2))
 							{
-								if (password_verify($a['t'].$a['p'].CSRF_SECRET,$a['seal']))
+								if (password_verify($a['t'].$a['p'].$secret.session_id(),$a['seal']))
 								{
 									$csrf_valid = true;
 								} else {
@@ -190,7 +196,7 @@ class PostCheck {
 									if (array_key_exists('old-secret',$s)) $secret = $s['old-secret'];
 									if (strlen($secret)===(CSRF_BYTE_SIZE*2))
 									{
-										if (password_verify($a['t'].$a['p'].CSRF_SECRET,$a['seal']))
+										if (password_verify($a['t'].$a['p'].$secret.session_id(),$a['seal']))
 										{
 											$csrf_valid=true;
 										}
