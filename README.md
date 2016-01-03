@@ -7,12 +7,20 @@ This program provides a PHP class which validates POST requests.
 # PostCheck
 
 1) Request made over HTTPS
+
 2) Request made using POST
+
 3) Valid Content-Type (application/x-www-form-urlencoded or multipart/form-data)
+
 4) HTTP Connection type must be keep-alive (ie, not 'close')
+
 5) Referrer must match host
+
 6) Content Length data payload must not exceed defined limit (if no files uploaded)
+
 7) CSRF Token check
+
+
 
 # Simple example
 
